@@ -4,7 +4,7 @@ npm i ymfl-kityminder
 
 ## main.js
 ```
-import 'ymfl-kityminder-editor/dist/ymfl-kityMinder.css'
+import 'ymfl-kityminder-editor/dist/index.css'
 import kityMinder from 'ymfl-kityminder'
 
 Vue.use(kityMinder)
