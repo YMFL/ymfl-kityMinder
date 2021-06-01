@@ -1,0 +1,59 @@
+{
+  "name": "ymfl-kityminder",
+  "version": "0.1.1",
+  "private": false,
+  "description": "ymfl-kityminder",
+  "author": "ymfl <649719596@qq.com>",
+  "main": "dist/ymfl-kityMinder.umd.min.js",
+  "homepage": "https://github.com/YMFL/ymfl-kityMinder",
+  "license": "GPL-2.0",
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lib": "vue-cli-service build --target lib --name ymfl-kityMinder --dest dist packages/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YMFL/ymfl-kityMinder.git"
+  },
+  "dependencies": {
+    "core-js": "^3.3.2",
+    "css-loader": "^3.2.0",
+    "jquery": "^3.6.0",
+    "kity": "^2.0.4",
+    "kityminder-core": "^1.4.50",
+    "lodash": "^4.17.15",
+    "marked": "^2.0.6",
+    "vue": "^2.6.10",
+    "vue-style-loader": "^4.1.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.0.0",
+    "@vue/cli-plugin-eslint": "^4.0.0",
+    "@vue/cli-service": "^4.0.0",
+    "babel-eslint": "^10.0.3",
+    "codemirror": "^5.61.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential"
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
