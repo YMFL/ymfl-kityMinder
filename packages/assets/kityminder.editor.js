@@ -2,8 +2,8 @@
  * ====================================================
  * kityminder-editor - v1.0.67 - 2019-02-12
  * https://github.com/fex-team/kityminder-editor
- * GitHub: https://github.com/fex-team/kityminder-editor 
- * Copyright (c) 2019 ; Licensed 
+ * GitHub: https://github.com/fex-team/kityminder-editor
+ * Copyright (c) 2019 ; Licensed
  * ====================================================
  */
 
@@ -173,14 +173,14 @@ _p[5] = {
 		 * @method getMimeTypeProtocol  	public
 		 * @param  {String} type 数据类型
 		 * @param  {String} text|undefiend  文本内容或不传入
-		 * @return {String|Function} 
-		 * @example 
+		 * @return {String|Function}
+		 * @example
 		 * 			text若不传入则直接返回对应数据格式的处理(process)方法
 		 * 			若传入文本则直接调用对应的process方法进行处理，此时返回处理后的内容
 		 * 			var m = new MimeType();
 		 * 			var kmprocess = m.getMimeTypeProtocol('application/km');
 		 * 			kmprocess("123") === m.getMimeTypeProtocol('application/km', "123");
-		 * 			
+		 *
 		 */
             this.getMimeTypeProtocol = function(type, text) {
                 var mimetype = MIMETYPE[type] || false;
@@ -631,7 +631,7 @@ _p[9] = {
             };
             /**
          * 添加状态跳转监视器
-         * 
+         *
          * @param {string} condition
          *     监视的时机
          *         "* => *" （默认）

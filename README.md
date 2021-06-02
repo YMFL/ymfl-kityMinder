@@ -14,12 +14,37 @@ Vue.use(kityMinder)
 ## 组件中使用
 
 ```
-<kityMinder :importJson="importJson" />
+ <kityMinder
+     :value="JSON.stringify(json)"
+     :type="type"
+     @init="initHandler"
+     @destroyed="destroyedHandler"
+     @import="importHandler"
+     @export="exportHandler"
+     @contentchange="contentchangeHandler"
+ >
+     <span slot="title">title</span>
+ </kityMinder>
 ```
+
+## 暴露方法参数说明
+init: editor, minder
+
+destroyed: 无
+
+import: content, type
+
+export: content, type
+
+contentchange: content, type
+
+## 效果展示
+<img src="./static/1.png" width = "400"  alt="图片名称" align=center />
+<!--![avatar](./static/1.png  =100x100)-->
 
 ## 测试数据
 ```
-importJson: {
+value: {
     'data': {
       'id': 2,
       'text': 'Design project',
@@ -51,12 +76,26 @@ importJson: {
     ]
 }
 ```
-## Feature
-1.双向数据绑定
-
-2.暴露更多方法
 
 
 ## 求助
 
-nuxt不支持  不知道原因
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢
+
+nuxt框架引入该组件，不成功 请大佬帮解决 谢谢

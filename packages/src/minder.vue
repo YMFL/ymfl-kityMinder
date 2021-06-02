@@ -1,6 +1,25 @@
 <template>
     <div ng-app="kityminderDemo" ng-controller="MainController">
-        <h1 class="editor-title">KityMinder Editor - Powered By FEX</h1>
+        <h1 class="editor-title">
+            <slot name="title">
+                <span @click="gotoGithub">
+                    KityMinder Editor
+                </span>
+            </slot>
+            <a href=""
+               class="diy export"
+               @click="exportHandler('json')"
+            >导出json</a>
+            <a href="" class="diy export" @click="exportHandler('markdown')">导出md</a>
+            <a href="" class="diy export" @click="exportHandler('json')">导出km</a>
+            <a href="" class="diy export" @click="exportHandler('svg')">导出svg</a>
+            <a href="" class="diy export" @click="exportHandler('text')">导出text</a>
+            <a href="" class="diy export" @click="exportHandler('png')">导出png</a>
+            <button class="diy input" @click="inputHandler">
+                导入
+            </button>
+            <input type="file" class="fileInput" ref="fileInput" accept=".km,.txt,.md,.json">
+        </h1>
         <kityminder-editor on-init="initEditor(editor, minder)"></kityminder-editor>
     </div>
 </template>
@@ -16,7 +35,6 @@
   import '../assets/kityminder.editor.min.css'
 
 
-  // import '../assets/bower_components/bootstrap/dist/js/bootstrap.js';
   import '../assets/bower_components/angular/angular.js';
   import '../assets/bower_components/angular-bootstrap/ui-bootstrap-tpls.js';
 
@@ -44,188 +62,130 @@
     name: 'kityMinder',
     data() {
       return {
-        minder: {}
+        editor: '',
+        minder: '',
       }
     },
     props: {
-      importJson: {
-        type: [Object,Array],
+      value: {
+        type: [Object, Array, String],
         default: () => []
+      },
+      type: {
+        type: String,
+        default: 'json'
       }
     },
     watch: {
-      importJson: {
-        handler(val) {
-          this.importData(val);
+      value: {
+        handler() {
+          this.importData();
+        },
+        deep: true,
+      },
+      type: {
+        handler() {
+          this.importData();
         },
         deep: true,
       }
     },
-
     mounted() {
-      let that=this;
+      let that = this;
       angular.module('kityminderDemo', ['kityminderEditor'])
         .config(function (configProvider) {
-          console.log(100000000000)
           configProvider.set('imageUpload', '../server/imageUpload.php');
         })
         .controller('MainController', function ($scope) {
-          console.log(109999999)
           $scope.initEditor = function (editor, minder) {
-            window.editor = editor;
-            window.minder = minder;
-            // that.importData();
-            that.addEvent()
+            that.editor = editor;
+            that.minder = minder;
+            that.$emit('init', editor, minder);
+            that.importData();
+            that.minder.on('contentchange', function (val) {
+              that.contentChangeHandler(that.type)
+            });
           };
         });
+      this.$refs.fileInput.addEventListener('change', this.fileChangeHandler)
+    },
+    destroyed() {
+      this.$emit('destroyed')
+      this.$refs.fileInput.removeListener('change', this.fileChangeHandler)
     },
     methods: {
-      addEvent(){
-        var oldData;
-        var html = '';
-        html += '<a href="" class="diy export" data-type="json">导出json</a>',
-          html += '<a href="" class="diy export" data-type="md">导出md</a>',
-          html += '<a href="" class="diy export" data-type="km">导出km</a>',
-          html += '<a href="" class="diy export" data-type="svg">导出svg</a>',
-          html += '<a href="" class="diy export" data-type="txt">导出text</a>',
-          html += '<a href="" class="diy export" data-type="png">导出png</a>',
-          html += '<button class="diy input">',
-          html += '导入<input type="file" id="fileInput" accept=".km,.txt,.md,.json" >',
-          html += '</button>';
-
-        $('.editor-title').append(html);
-
-        $('.diy').css({
-          // 'height': '30px',
-          // 'line-height': '30px',
-          'margin-top': '0px',
-          'float': 'right',
-          'background-color': '#fff',
-          'min-width': '60px',
-          'text-decoration': 'none',
-          color: '#999',
-          'padding': '0 10px',
-          border: 'none',
-          'border-right': '1px solid #ccc',
+      contentChangeHandler() {
+        this.editor.minder.exportData(this.type).then((content) => {
+          this.$emit('contentchange', content, this.type)
         });
-        $('.input').css({
-          'overflow': 'hidden',
-          'position': 'relative',
-        }).find('input').css({
-          cursor: 'pointer',
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          display: 'inline-block',
-          opacity: 0
-        });
-
-        $(document).on('click', '.export', function (event) {
-          event.preventDefault();
-          var $this = $(this),
-            type = $this.data('type'),
-            exportType;
-          switch (type) {
-            case 'km':
-              exportType = 'json';
-              break;
-            case 'md':
-              exportType = 'markdown';
-              break;
-            case 'svg':
-              exportType = 'svg';
-              break;
-            case 'txt':
-              exportType = 'text';
-              break;
-            case 'png':
-              exportType = 'png';
-              break;
-            default:
-              exportType = type;
-              break;
-          }
-
-          editor.minder.exportData(exportType).then(function (content) {
-            switch (exportType) {
+      },
+      inputHandler() {
+        this.$refs.fileInput.click();
+      },
+      fileChangeHandler(event) {
+        const f = this.$refs.fileInput;
+        const {files} = f;
+        if (files) {
+          [...files].forEach((file) => {
+            let fileType = file.name.substr(file.name.lastIndexOf('.') + 1);
+            switch (fileType) {
+              case 'md':
+                this.type = 'markdown'
+                break;
+              case 'txt':
+                fileType = 'text';
+                this.type = 'text';
+                break;
+              case 'km':
+                fileType = 'json';
+                this.type = 'json';
+                break;
               case 'json':
-                console.log($.parseJSON(content));
+                fileType = 'json';
+                this.type = 'json';
                 break;
               default:
-                console.log(content);
-                break;
+                alert('只支持.km、.md、、text、.json文件');
+                return;
             }
-            var blob = new Blob();
-            switch (exportType) {
-              case 'png':
-                blob = this.dataURLtoBlob(content); //将base64编码转换为blob对象
-                break;
-              default:
-                blob = new Blob([content]);
-                break;
-            }
-            var a = document.createElement("a"); //建立标签，模拟点击下载
-            a.download = $('#node_text1').text() + '.' + type;
-            a.href = URL.createObjectURL(blob);
-            a.click();
-
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = (e) => {
+              const {result} = e.target;
+              this.editor.minder.importData(this.type, result).then((data) => {
+                this.$emit('import', data, this.type)
+                // this.innerValue = data;
+              });
+            };
           });
-        });
-
-
-        var fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', function (e) {
-          var file = fileInput.files[0],
-            // textType = /(md|km)/,
-            fileType = file.name.substr(file.name.lastIndexOf('.') + 1);
-          console.log(file);
-          switch (fileType) {
-            case 'md':
-              fileType = 'markdown';
-              break;
-            case 'txt':
-              fileType = 'text';
-              break;
-            case 'km':
-            case 'json':
-              fileType = 'json';
-              break;
-            default:
-              console.log("File not supported!");
-              alert('只支持.km、.md、、text、.json文件');
-              return;
-          }
-          var reader = new FileReader();
-          reader.onload = function (e) {
-            var content = reader.result;
-            editor.minder.importData(fileType, content).then(function (data) {
-              console.log(data)
-              $(fileInput).val('');
-            });
-          }
-          reader.readAsText(file);
-        });
-      },
-      dataURLtoBlob(dataurl) {
-        var arr = dataurl.split(',');
-        //注意base64的最后面中括号和引号是不转译的
-        var _arr = arr[1].substring(0, arr[1].length - 2);
-        var mime = arr[0].match(/:(.*?);/)[1],
-          bstr = atob(_arr),
-          n = bstr.length,
-          u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
         }
-        return new Blob([u8arr], {
-          type: mime
+        event.target.value = '';
+      },
+      gotoGithub() {
+        window.open('https://github.com/YMFL/ymfl-kityMinder');
+      },
+      exportHandler(exportType) {
+        this.editor.minder.exportData(exportType).then((content) => {
+          this.$emit('export', content, exportType)
         });
       },
-      importData(){
-        console.log(this.importJson);
-        window.editor.minder.importData('json', this.importJson).then(function (data) {
+      // dataURLtoBlob(dataurl) {
+      //   var arr = dataurl.split(',');
+      //   //注意base64的最后面中括号和引号是不转译的
+      //   var _arr = arr[1].substring(0, arr[1].length - 2);
+      //   var mime = arr[0].match(/:(.*?);/)[1],
+      //     bstr = atob(_arr),
+      //     n = bstr.length,
+      //     u8arr = new Uint8Array(n);
+      //   while (n--) {
+      //     u8arr[n] = bstr.charCodeAt(n);
+      //   }
+      //   return new Blob([u8arr], {
+      //     type: mime
+      //   });
+      // },
+      importData() {
+        this.editor.minder.importData(this.type, this.value).then(function (data) {
           console.log(data)
         });
       }
@@ -234,6 +194,7 @@
 </script>
 <style scoped>
     h1.editor-title {
+        cursor: pointer;
         background: #393F4F;
         color: white;
         margin: 0;
@@ -251,5 +212,26 @@
         bottom: 0;
         left: 0;
         right: 0;
+    }
+
+    .diy {
+        margin-top: 0;
+        float: right;
+        background-color: #fff;
+        min-width: 60px;
+        text-decoration: none;
+        color: #999;
+        padding: 0 10px;
+        border: none;
+        border-right: 1px solid #ccc;
+    }
+
+    .input {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .fileInput {
+        display: none;
     }
 </style>
