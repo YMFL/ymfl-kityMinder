@@ -14,7 +14,7 @@ Vue.use(kityMinder)
 ## 组件中使用
 
 ```
-<kityMinder :importJson="importJson" @minder="minderHandle" />
+<kityMinder :importJson="importJson" />
 ```
 
 ## 测试数据
@@ -51,3 +51,12 @@ importJson: {
     ]
 }
 ```
+## Feature
+1.双向数据绑定
+
+2.暴露更多方法
+
+
+## 求助
+
+nuxt不支持  不知道原因
